@@ -111,12 +111,8 @@ Lemma functor_data_eq_prf (C C': precategory_ob_mor) (F F' : functor_data C C')
     (funextfun F F' (λ c : C, H c)) (pr2 F) = pr2 F'.
 Proof.
 use funextsec. intros C1. use funextsec. intros C2. use funextsec. intros f.
-assert (e : transportf (λ x, ∏ a b : C, a --> b → x a --> x b)
-                       (funextfun F F' (λ c : C, H c)) (pr2 F) C1 C2 f =
-            transportf (λ x, x C1 --> x C2)
-                       (funextfun F F' (λ c : C, H c)) (pr2 F C1 C2 f)).
-{ now induction (funextfun F F' (λ c, H c)). }
-rewrite e, transport_mor_funextfun, transport_source_funextfun, transport_target_funextfun.
+rewrite <- !helper_A.
+rewrite transport_mor_funextfun, transport_source_funextfun, transport_target_funextfun.
 exact (H1 C1 C2 f).
 Qed.
 
