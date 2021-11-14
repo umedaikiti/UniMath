@@ -1531,45 +1531,42 @@ Proof.
   - induction e. apply idpath.
 Defined.
 
-(*see functor_data_eq_prf*)
 Definition disp_functor_data_eq {C C'} {F} {D : disp_cat C} {D' : disp_cat C'} (FF FF' : disp_functor_data F D D') (H : ∏ x y, FF x y = FF' x y) : (∏ C1 C2 (f : C1 --> C2) D1 D2 (ff : D1 -->[f] D2),
 disp_double_transport (H C1 D1) (H C2 D2) (pr2 FF C1 C2 D1 D2 f ff) =
 pr2 FF' C1 C2 D1 D2 f ff) -> FF = FF'.
 Proof.
   intro X.
   use total2_paths2_f.
-  apply funextsec. intro x.
-  apply funextsec. intro x0.
-  apply H.
-  apply funextsec. intro x. apply funextsec. intro y.
-  apply funextsec. intro x0. apply funextsec. intro y0.
-  apply funextsec. intro f. apply funextsec. intro g.
-  set (funext := (funextsec (λ t : C, D t → D' (F t)) (pr1 FF) (pr1 FF') (λ x5 : C, funextsec (λ _ : D x5, D' (F x5)) (pr1 FF x5) (pr1 FF' x5) (λ x6 : D x5, H x5 x6)))).
-  rewrite <- !helper_A.
-  rewrite (transportf2_comp (λ Y Z : ∏ x5 : C, D x5 → D' (F x5), Z x x0 -->[ # F f] Y y y0))%cat.
-  set (FFx := pr2 FF x y x0 y0 f g).
-  replace (transportf (λ yy : ∏ x5 : C, D x5 → D' (F x5), yy x x0 -->[ # F f] pr1 FF y y0) funext FFx)%cat with (transportf (λ yy : D' (F x), yy -->[ # F f] FF y y0) (H x x0) FFx)%cat.
-  set (p := (transportf (λ yy : D' (F x), yy -->[ # F f] FF y y0) (H x x0) FFx)%cat).
-  replace (transportf (λ yy : ∏ x5 : C, D x5 → D' (F x5), pr1 FF' x x0 -->[ # F f] yy y y0) funext p)%cat with (transportf (λ yy : D' (F y), FF' x x0 -->[ # F f] yy) (H y y0) p)%cat.
-  exact (X x y f x0 y0 g).
-
-  unfold funext.
-  rewrite (transportf_funextfun' FF FF' _ _ (λ Fob : D y → D' (F y), FF' x x0 -->[ # F f] Fob y0))%cat.
-  rewrite <- (transportf_funextfun (λ yy : D' (F y), FF' x x0 -->[ # F f] yy) _ _ (H y) y0 p)%cat.
-  reflexivity.
-
-  rewrite (transportf_funextfun' _ _ (fun x5 => (funextsec (λ _ : D x5, D' (F x5)) (FF x5) (FF' x5) (H x5))) x (λ x5 : D x → D' (F x), x5 x0 -->[ # F f] FF y y0))%cat.
-  rewrite <- (transportf_funextfun (λ yy : D' (F x), yy -->[ # F f] FF y y0) _ _ (H x) x0 FFx)%cat.
-  reflexivity.
+  - apply funextsec. intro x.
+    apply funextsec. intro x0.
+    apply H.
+  - apply funextsec. intro x. apply funextsec. intro y.
+    apply funextsec. intro x0. apply funextsec. intro y0.
+    apply funextsec. intro f. apply funextsec. intro g.
+    set (funext := (funextsec (λ t : C, D t → D' (F t)) (pr1 FF) (pr1 FF') (λ x5 : C, funextsec (λ _ : D x5, D' (F x5)) (pr1 FF x5) (pr1 FF' x5) (λ x6 : D x5, H x5 x6)))).
+    rewrite <- !helper_A.
+    rewrite (transportf2_comp (λ Y Z : ∏ x5 : C, D x5 → D' (F x5), Z x x0 -->[ # F f] Y y y0))%cat.
+    set (FFx := pr2 FF x y x0 y0 f g).
+    replace (transportf (λ yy : ∏ x5 : C, D x5 → D' (F x5), yy x x0 -->[ # F f] pr1 FF y y0) funext FFx)%cat with (transportf (λ yy : D' (F x), yy -->[ # F f] FF y y0) (H x x0) FFx)%cat.
+    set (p := (transportf (λ yy : D' (F x), yy -->[ # F f] FF y y0) (H x x0) FFx)%cat).
+    replace (transportf (λ yy : ∏ x5 : C, D x5 → D' (F x5), pr1 FF' x x0 -->[ # F f] yy y y0) funext p)%cat with (transportf (λ yy : D' (F y), FF' x x0 -->[ # F f] yy) (H y y0) p)%cat.
+    + exact (X x y f x0 y0 g).
+    + unfold funext.
+      rewrite (transportf_funextfun' FF FF' _ _ (λ Fob : D y → D' (F y), FF' x x0 -->[ # F f] Fob y0))%cat.
+      rewrite <- (transportf_funextfun (λ yy : D' (F y), FF' x x0 -->[ # F f] yy) _ _ (H y) y0 p)%cat.
+      reflexivity.
+    + rewrite (transportf_funextfun' _ _ (fun x5 => (funextsec (λ _ : D x5, D' (F x5)) (FF x5) (FF' x5) (H x5))) x (λ x5 : D x → D' (F x), x5 x0 -->[ # F f] FF y y0))%cat.
+      rewrite <- (transportf_funextfun (λ yy : D' (F x), yy -->[ # F f] FF y y0) _ _ (H x) x0 FFx)%cat.
+      reflexivity.
 Defined.
 
 Definition disp_functor_eq {C C'} {F} {D : disp_cat C} {D' : disp_cat C'} (G H : disp_functor F D D') : pr1 G = pr1 H -> G = H.
 Proof.
   intro.
   apply subtypePath.
-  intro.
-  apply isaprop_disp_functor_axioms.
-  assumption.
+  - intro.
+    apply isaprop_disp_functor_axioms.
+  - assumption.
 Defined.
 
 End Functor_Eq.
@@ -2061,13 +2058,13 @@ Definition total_nat_trans {C' C} {F G}
 {D' : disp_cat C'} {D : disp_cat C} {FF : disp_functor F D' D} {GG : disp_functor G D' D} {a : nat_trans F G} (aa : disp_nat_trans a FF GG) : total_functor FF ⟹ total_functor GG.
 Proof.
   use make_nat_trans.
-  intro x.
-  exists (a (pr1 x)).
-  apply aa.
-  intros x y f.
-  use total2_paths2_b.
-  apply nat_trans_ax.
-  apply disp_nat_trans_ax.
+  - intro x.
+    exists (a (pr1 x)).
+    apply aa.
+  - intros x y f.
+    use total2_paths2_b.
+    + apply nat_trans_ax.
+    + apply disp_nat_trans_ax.
 Defined.
 
 End Disp_Nat_Trans.
