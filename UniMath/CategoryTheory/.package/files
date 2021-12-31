@@ -126,6 +126,7 @@ Monads/MonadAlgebras.v
 Adjunctions/Restriction.v
 Adjunctions/Examples.v
 Subcategory/Reflective.v
+QuotientCategory.v
 
 categories/setwith2binops.v
 categories/monoids.v
