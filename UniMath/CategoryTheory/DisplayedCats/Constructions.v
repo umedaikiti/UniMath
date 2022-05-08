@@ -118,7 +118,7 @@ Proof.
   split; cbn; intros.
   - apply Hid.
   - eapply Hcomp. apply X. apply X0.
-Qed.
+Defined.
 
 Definition disp_struct_data : disp_cat_data C := _ ,, disp_struct_id_comp.
 
