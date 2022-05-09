@@ -283,6 +283,10 @@ Definition fibration (C : category) : UU
 :=
   ∑ D : disp_cat C, cleaving D.
 
+Definition disp_cat_from_fibration {C : category} : fibration C -> disp_cat C := pr1.
+Coercion disp_cat_from_fibration : fibration >-> disp_cat.
+
+Definition cleaving_from_fibration {C : category} (D : fibration C) : cleaving D := pr2 D.
 
 (** ** Weak fibration *)
 
