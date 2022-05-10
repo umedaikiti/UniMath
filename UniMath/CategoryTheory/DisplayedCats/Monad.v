@@ -55,23 +55,27 @@ Definition disp_monad_law3 {D : disp_cat C} (TT : disp_monad D) : (∏ (c : C) (
 
 Definition make_disp_monad {D : disp_cat C} (data : disp_monad_data D) (law : disp_monad_laws data) : disp_monad D := (data,, law).
 
+Lemma total_monad_laws {D : disp_cat C} (TT : disp_monad D) : Monad_laws (total_monad_data TT).
+Proof.
+  repeat split.
+  - intros.
+  use total2_paths2_b.
+  + apply Monad_law1.
+  + apply disp_monad_law1.
+- intros.
+  use total2_paths2_b.
+  + apply Monad_law2.
+  + apply disp_monad_law2.
+- intros.
+  use total2_paths2_b.
+  + apply Monad_law3.
+  + apply disp_monad_law3.
+Qed.
+
 Definition total_monad {D : disp_cat C} (TT : disp_monad D) : Monad (total_category D).
 Proof.
   exists (total_monad_data TT).
-  split.
-  split.
-  - intros.
-    use total2_paths2_b.
-    + apply Monad_law1.
-    + apply disp_monad_law1.
-  - intros.
-    use total2_paths2_b.
-    + apply Monad_law2.
-    + apply disp_monad_law2.
-  - intros.
-    use total2_paths2_b.
-    + apply Monad_law3.
-    + apply disp_monad_law3.
+  apply total_monad_laws.
 Defined.
 
 Definition disp_monad_eq {D : disp_cat C} (TT TT' : disp_monad D) : disp_monad_data_from_disp_monad TT = disp_monad_data_from_disp_monad TT' -> TT = TT'.
@@ -132,8 +136,7 @@ Proof.
   reflexivity.
 Defined.
 
-(*TODO*)
-Hint Rewrite @transport_precomposition @transport_postcomposition @disp_functor_transportf @transport_f_f @id_left_disp @id_right_disp @assoc_disp @disp_functor_id @disp_functor_comp : disp_cat_hint.
+Local Hint Rewrite @transport_precomposition @transport_postcomposition @disp_functor_transportf @transport_f_f @id_left_disp @id_right_disp @assoc_disp @disp_functor_id @disp_functor_comp : disp_cat_hint.
 
 Section DispMonadMor.
 
@@ -346,7 +349,6 @@ Proof.
   - apply Monad_Mor_μ.
 Defined.
 
-
 Context {C : category} (D : disp_cat C).
 
 Definition disp_monad_disp_cat_data : disp_cat_data (category_Monad C).
@@ -365,9 +367,8 @@ Proof.
       exact disp_monad_mor_composite.
 Defined.
 
-Definition disp_monad_disp_cat : disp_cat (category_Monad C).
+Lemma disp_monad_disp_cat_axioms : disp_cat_axioms (category_Monad C) disp_monad_disp_cat_data.
 Proof.
-  exists disp_monad_disp_cat_data.
   repeat split.
   - intros.
     apply disp_monad_mor_eq.
@@ -414,6 +415,12 @@ Proof.
     apply isaset_disp_nat_trans.
     intro.
     apply isasetaprop;apply isapropdirprod;repeat (apply impred_isaprop; intro);apply homsets_disp.
+Qed.
+
+Definition disp_monad_disp_cat : disp_cat (category_Monad C).
+Proof.
+  exists disp_monad_disp_cat_data.
+  apply disp_monad_disp_cat_axioms.
 Defined.
 
 End DispMonadDispCat.
