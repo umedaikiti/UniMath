@@ -124,19 +124,7 @@ Defined.
 
 End MonadLifting.
 
-Lemma transport_precomposition {C : category} {D : disp_cat C} {x y z : ob C} (f : x --> y) (g g' : y --> z) (e : g = g') {xx : D x} {yy : D y} {zz : D z} (ff : xx -->[f] yy) (gg : yy -->[g] zz) : (ff ;; transportf (mor_disp yy zz) e gg = transportf (mor_disp xx zz) (cancel_precomposition _ _ _ _ _ _ _ e) (ff ;; gg))%mor_disp.
-Proof.
-  induction e.
-  reflexivity.
-Defined.
-
-Lemma transport_postcomposition {C : category} {D : disp_cat C} {x y z : ob C} (f f' : x --> y) (g : y --> z) (e : f = f') {xx : D x} {yy : D y} {zz : D z} (ff : xx -->[f] yy) (gg : yy -->[g] zz) : (transportf (mor_disp xx yy) e ff ;; gg = transportf (mor_disp xx zz) (cancel_postcomposition _ _ _ e) (ff ;; gg))%mor_disp.
-Proof.
-  induction e.
-  reflexivity.
-Defined.
-
-Local Hint Rewrite @transport_precomposition @transport_postcomposition @disp_functor_transportf @transport_f_f @id_left_disp @id_right_disp @assoc_disp @disp_functor_id @disp_functor_comp : disp_cat_hint.
+Local Hint Rewrite @mor_disp_transportf_prewhisker @mor_disp_transportf_postwhisker @disp_functor_transportf @transport_f_f @id_left_disp @id_right_disp @assoc_disp @disp_functor_id @disp_functor_comp : disp_cat_hint.
 
 Section DispMonadMor.
 
@@ -178,7 +166,7 @@ Proof.
     rewrite id_left_disp.
     rewrite disp_functor_id.
     unfold transportb.
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite id_left_disp.
     unfold transportb.
     rewrite !transport_f_f.*)
@@ -203,7 +191,7 @@ Proof.
       apply (disp_monad_mor_η ff).
     }
     unfold transportb.
-    rewrite transport_postcomposition.
+    rewrite mor_disp_transportf_postwhisker.
     etrans.
     {
       do 2 apply maponpaths.
@@ -221,7 +209,7 @@ Proof.
       apply (disp_monad_mor_μ ff).
     }
     unfold transportb.
-    rewrite transport_postcomposition.
+    rewrite mor_disp_transportf_postwhisker.
     rewrite assoc_disp_var.
     etrans.
     {
@@ -230,24 +218,24 @@ Proof.
       apply (disp_monad_mor_μ gg).
     }
     unfold transportb.
-    rewrite transport_precomposition.
+    rewrite mor_disp_transportf_prewhisker.
     rewrite assoc_disp_var.
     do 2 rewrite (assoc_disp (# TT (ff x xx))).
     rewrite (disp_nat_trans_ax gg).
     autorewrite with disp_cat_hint using unfold transportb.
     (*unfold transportb.
-    rewrite transport_precomposition.
-    rewrite !transport_postcomposition.
-    rewrite !transport_precomposition.
+    rewrite mor_disp_transportf_prewhisker.
+    rewrite !mor_disp_transportf_postwhisker.
+    rewrite !mor_disp_transportf_prewhisker.
     rewrite disp_functor_comp.
     rewrite !assoc_disp.
     unfold transportb.
-    rewrite !transport_postcomposition.
-    rewrite transport_precomposition.
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_postwhisker.
+    rewrite mor_disp_transportf_prewhisker.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite !assoc_disp.
     unfold transportb.
-    rewrite transport_postcomposition.
+    rewrite mor_disp_transportf_postwhisker.
     rewrite !transport_f_f.*)
     apply transportf_paths.
     apply homset_property.
@@ -290,11 +278,11 @@ Proof.
       rewrite assoc_disp_var.
       rewrite cartesian_factorisation_commutes.
       unfold transportb.
-      rewrite transport_postcomposition.
+      rewrite mor_disp_transportf_postwhisker.
       rewrite assoc_disp_var.
       rewrite (disp_nat_trans_ax aa).
       unfold transportb.
-      rewrite transport_precomposition.
+      rewrite mor_disp_transportf_prewhisker.
       rewrite assoc_disp.
       rewrite cartesian_factorisation_commutes.
       etrans.
@@ -448,7 +436,7 @@ Proof.
   repeat split; intros x xx; cbn.
   - apply (cartesian_factorisation_unique (cartesian_factorisation_disp_functor_cell_is_cartesian (cleaving_from_fibration D) TT f xx)).
     unfold transportb.
-    rewrite transport_postcomposition.
+    rewrite mor_disp_transportf_postwhisker.
     rewrite id_left_disp.
     rewrite assoc_disp_var.
     rewrite cartesian_factorisation_commutes.
@@ -457,26 +445,26 @@ Proof.
     (cartesian_factorisation_disp_functor (cleaving_from_fibration D) TT f)
     (cartesian_factorisation_disp_functor (cleaving_from_fibration D) TT f)) TT _ (! monad_mor_μ_pointfree f)).
     cbn.
-    rewrite transport_precomposition.
+    rewrite mor_disp_transportf_prewhisker.
     rewrite !assoc_disp.
     unfold transportb.
     rewrite !transport_f_f.
-    rewrite transport_postcomposition.
+    rewrite mor_disp_transportf_postwhisker.
     rewrite !transport_f_f.
     rewrite cartesian_factorisation_commutes.
     rewrite (@transportf_disp_nat_trans _ D (functor_identity C) T _ _ _ _ (η T TT) (! monad_mor_η_pointfree f)).
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_postwhisker.
     etrans.
     {
       do 2 apply maponpaths.
       eapply (maponpaths (λ h, h;;_)%mor_disp).
       apply (disp_nat_trans_ax_var (η T TT)).
     }
-    rewrite transport_postcomposition.
+    rewrite mor_disp_transportf_postwhisker.
     rewrite assoc_disp_var.
     rewrite (disp_monad_law1 T TT).
     unfold transportb.
-    rewrite transport_precomposition.
+    rewrite mor_disp_transportf_prewhisker.
     rewrite id_right_disp.
     unfold transportb.
     rewrite !transport_f_f.
@@ -484,7 +472,7 @@ Proof.
     apply homset_property.
   - apply (cartesian_factorisation_unique (cartesian_factorisation_disp_functor_cell_is_cartesian (cleaving_from_fibration D) TT f xx)).
     unfold transportb.
-    rewrite transport_postcomposition.
+    rewrite mor_disp_transportf_postwhisker.
     rewrite id_left_disp.
     rewrite assoc_disp_var.
     rewrite cartesian_factorisation_commutes.
@@ -493,28 +481,28 @@ Proof.
     (cartesian_factorisation_disp_functor (cleaving_from_fibration D) TT f)
     (cartesian_factorisation_disp_functor (cleaving_from_fibration D) TT f)) TT _ (! monad_mor_μ_pointfree f)).
     cbn.
-    rewrite transport_precomposition.
+    rewrite mor_disp_transportf_prewhisker.
     rewrite !assoc_disp.
     unfold transportb.
     rewrite !transport_f_f.
-    rewrite transport_postcomposition.
+    rewrite mor_disp_transportf_postwhisker.
     rewrite !transport_f_f.
     rewrite cartesian_factorisation_commutes.
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite !transport_f_f.
     rewrite (@transportf_disp_nat_trans _ D (functor_identity C) T _ _ _ _ (η T TT) (! monad_mor_η_pointfree f)).
     rewrite (assoc_disp_var _ (#TT _) (#TT _)).
     rewrite <- (disp_functor_comp_var TT).
     rewrite cartesian_factorisation_commutes.
     rewrite disp_functor_transportf.
-    rewrite !transport_postcomposition.
-    rewrite !transport_precomposition.
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_postwhisker.
+    rewrite !mor_disp_transportf_prewhisker.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite assoc_disp_var.
     rewrite !transport_f_f.
     rewrite (disp_monad_law2 T TT x).
     unfold transportb.
-    rewrite transport_precomposition.
+    rewrite mor_disp_transportf_prewhisker.
     rewrite id_right_disp.
     unfold transportb.
     rewrite !transport_f_f.
@@ -522,7 +510,7 @@ Proof.
     apply homset_property.
   - apply (cartesian_factorisation_unique (cartesian_factorisation_disp_functor_cell_is_cartesian (cleaving_from_fibration D) TT f xx)).
     unfold transportb.
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite assoc_disp_var.
     rewrite cartesian_factorisation_commutes.
     rewrite assoc_disp_var.
@@ -530,29 +518,29 @@ Proof.
     rewrite !(@transportf_disp_nat_trans _ D (S ∙ S) T _ _ (disp_functor_composite
     (cartesian_factorisation_disp_functor (cleaving_from_fibration D) TT f)
     (cartesian_factorisation_disp_functor (cleaving_from_fibration D) TT f)) TT _ (! monad_mor_μ_pointfree f)).
-    rewrite !transport_precomposition.
+    rewrite !mor_disp_transportf_prewhisker.
     cbn.
     rewrite !assoc_disp.
     unfold transportb.
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite !transport_f_f.
     do 2 rewrite cartesian_factorisation_commutes.
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite (assoc_disp_var _ (#TT _) (#TT _)).
     rewrite <- (disp_functor_comp_var TT).
     rewrite cartesian_factorisation_commutes.
     autorewrite with disp_cat_hint using unfold transportb.
     (*rewrite disp_functor_transportf.
-    rewrite !transport_postcomposition.
-    rewrite !transport_precomposition.
+    rewrite !mor_disp_transportf_postwhisker.
+    rewrite !mor_disp_transportf_prewhisker.
     rewrite !(disp_functor_comp TT).
     unfold transportb.
-    rewrite !transport_postcomposition.
-    rewrite !transport_precomposition.
+    rewrite !mor_disp_transportf_postwhisker.
+    rewrite !mor_disp_transportf_prewhisker.
     rewrite !transport_f_f.
     rewrite !assoc_disp.
     unfold transportb.
-    rewrite !transport_postcomposition.*)
+    rewrite !mor_disp_transportf_postwhisker.*)
     rewrite assoc_disp_var.
     rewrite !transport_f_f.
     etrans.
@@ -560,7 +548,7 @@ Proof.
     eapply (maponpaths (λ h, _;;h)%mor_disp).
     apply (disp_monad_law3 T TT).
     unfold transportb.
-    rewrite !transport_precomposition.
+    rewrite !mor_disp_transportf_prewhisker.
     rewrite assoc_disp.
     unfold transportb.
     rewrite !transport_f_f.
@@ -573,11 +561,11 @@ Proof.
     apply (disp_nat_trans_ax (μ T TT)).
     autorewrite with disp_cat_hint using unfold transportb.
     (*unfold transportb.
-    rewrite !transport_precomposition.
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_prewhisker.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite assoc_disp.
     unfold transportb.
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite !transport_f_f.*)
     apply transportf_paths.
     apply homset_property.
@@ -620,7 +608,7 @@ Proof.
     cbn.
     apply (cartesian_factorisation_unique (cartesian_factorisation_disp_functor_cell_is_cartesian (cleaving_from_fibration D) TT f xx)).
     unfold transportb.
-    rewrite transport_postcomposition.
+    rewrite mor_disp_transportf_postwhisker.
     rewrite assoc_disp_var.
     do 2 rewrite cartesian_factorisation_commutes.
     etrans.
@@ -641,31 +629,31 @@ Proof.
     rewrite cartesian_factorisation_commutes.
     unfold transportb.
     rewrite (@transportf_disp_nat_trans _ D (S ∙ S) T _ _ (disp_functor_composite (cartesian_factorisation_disp_functor (cleaving_from_fibration D) TT f) (cartesian_factorisation_disp_functor (cleaving_from_fibration D) TT f)) TT _ (! monad_mor_μ_pointfree f)).
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite assoc_disp_var.
     rewrite cartesian_factorisation_commutes.
-    rewrite !transport_precomposition.
+    rewrite !mor_disp_transportf_prewhisker.
     cbn.
     rewrite assoc_disp.
     unfold transportb.
     rewrite !transport_f_f.
     rewrite assoc_disp.
     unfold transportb.
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite !transport_f_f.
     rewrite (assoc_disp_var (cartesian_factorisation _ _ _)).
     rewrite cartesian_factorisation_commutes.
-    rewrite !transport_precomposition.
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_prewhisker.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite !transport_f_f.
     rewrite assoc_disp.
     unfold transportb.
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite (assoc_disp_var _ (#TT _) (#TT _)).
     rewrite <- (disp_functor_comp_var TT).
     rewrite !cartesian_factorisation_commutes.
-    rewrite !transport_precomposition.
-    rewrite !transport_postcomposition.
+    rewrite !mor_disp_transportf_prewhisker.
+    rewrite !mor_disp_transportf_postwhisker.
     rewrite !transport_f_f.
     etrans.
     apply maponpaths.
