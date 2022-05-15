@@ -147,8 +147,6 @@ Proof.
 Qed.
 
 Definition comprehension_cat_structure (C : category) : UU
-  := ∑ (D : disp_cat C) (H : cleaving D)
-     (F : disp_functor (functor_identity _ ) D (disp_codomain C)),
-     is_cartesian_disp_functor F.
+  := ∑ (D : fibration C), cartesian_disp_functor (functor_identity _ ) D (disp_codomain C).
 
 Arguments comprehension_cat_structure _ : clear implicits.
